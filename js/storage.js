@@ -124,9 +124,13 @@ export const storage = {
     if (!Array.isArray(books) || !Array.isArray(commits)) return { ok: false, errors: [{ field: "storage", message: "Stored data could not be read safely." }] };
     const book = books.find((item) => item.id === id);
     if (!book) return { ok: false, errors: [{ field: "book", message: "Book not found." }] };
-    write(KEYS.books, books.filter((item) => item.id !== id));
-    write(KEYS.commits, commits.filter((item) => item.bookId !== id));
-    return { ok: true, data: book };
+    const booksWrite = write(KEYS.books, books.filter((item) => item.id !== id));
+    const commitsWrite = write(KEYS.commits, commits.filter((item) => item.bookId !== id));
+    return {
+      ok: true,
+      data: book,
+      warning: booksWrite.warning || commitsWrite.warning
+    };
   },
 
   listCommits(bookId = null) {

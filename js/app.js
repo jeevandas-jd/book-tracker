@@ -109,6 +109,7 @@ function createBookCard(book) {
   bottom.append(el("span", "card-date", `ADDED ${shortDate(book.createdAt)}`));
   const actions = el("div", "card-actions");
   actions.append(button("Open ↗", "text-button", "open-book", { id: book.id }));
+  actions.append(button("Delete", "text-button", "delete-book", { id: book.id, label: `Delete ${book.title}` }));
   actions.append(button("•••", "text-button", "book-menu", { id: book.id, label: "More options" }));
   bottom.append(actions);
   card.append(bottom);
@@ -349,6 +350,21 @@ function handleReviewSubmit(event) {
   if (activeView === "detail") renderDetail($("#review-book-id").value);
   renderLibrary();
 }
+function deleteBook(id) {
+  const book = storage.getBook(id);
+  if (!book) return;
+  const commits = allCommits(id).length;
+  if (!window.confirm(`Delete "${book.title}" and its ${commits} reading checkpoint(s)? This cannot be undone.`)) return;
+  const result = storage.deleteBook(id);
+  if (!result.ok) {
+    notify(result.errors?.[0]?.message || "Could not delete this book.");
+    return;
+  }
+  notify("Book deleted.");
+  showStorageWarning(result);
+  renderLibrary();
+  if (activeView === "detail") showView("library");
+}
 function handleAction(event) {
   const target = event.target.closest("[data-action]");
   if (!target) return;
@@ -364,23 +380,18 @@ function handleAction(event) {
     const result = storage.updateBook(id, { status: "finished" });
     if (result.ok) { notify("Marked as finished. Time to reflect!"); renderDetail(id); renderLibrary(); openReviewDialog(result.data); }
   }
+  if (action === "delete-book") deleteBook(id);
   if (action === "book-menu") {
     const book = storage.getBook(id);
     if (!book) return;
-    const choice = window.prompt(`Options for "${book.title}"\nType: reading, to-read, finished, edit, or delete`, "edit");
+    const choice = window.prompt(`Options for "${book.title}"\nType: reading, to-read, finished, or edit`, "edit");
     if (!choice) return;
     const normalized = choice.trim().toLowerCase();
     if (normalized === "edit") openBookDialog(book);
-    else if (normalized === "delete") {
-      const commits = allCommits(id).length;
-      if (window.confirm(`Delete "${book.title}" and its ${commits} reading checkpoint(s)? This cannot be undone.`)) {
-        const result = storage.deleteBook(id);
-        if (result.ok) { notify("Book deleted."); renderLibrary(); if (activeView === "detail") showView("library"); }
-      }
-    } else if (["reading", "to-read", "finished"].includes(normalized)) {
+    else if (["reading", "to-read", "finished"].includes(normalized)) {
       const result = storage.updateBook(id, { status: normalized });
       if (result.ok) { notify(`Status changed to ${statusLabels[normalized]}.`); renderLibrary(); if (activeView === "detail") renderDetail(id); }
-    } else notify("Choose reading, to-read, finished, edit, or delete.");
+    } else notify("Choose reading, to-read, finished, or edit.");
   }
 }
 
