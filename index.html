@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <meta name="description" content="A thoughtful space to track books, save reading notes, and pick up where you left off.">
+  <title>Folio — Your reading space</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#" data-view="library" aria-label="Folio home">
+        <span class="brand-mark" aria-hidden="true">f.</span>
+        <span class="brand-copy"><strong>folio</strong><small>YOUR READING SPACE</small></span>
+      </a>
+      <nav class="nav-list">
+        <button class="nav-link active" data-view="library"><span aria-hidden="true">▦</span> My library</button>
+        <button class="nav-link" data-view="journal"><span aria-hidden="true">☷</span> Reading journal</button>
+      </nav>
+      <div class="sidebar-note">
+        <span class="note-icon" aria-hidden="true">✳</span>
+        <p>Read a little.<br>Remember a lot.</p>
+        <small>Your next chapter starts here.</small>
+      </div>
+      <div class="sidebar-footer"><span class="status-dot"></span> Saved in this browser</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark">f.</span><strong>folio</strong></div>
+        <div class="breadcrumb" id="breadcrumb">YOUR SPACE <span>/</span> MY LIBRARY</div>
+        <button class="button button-primary" id="add-book-button"><span aria-hidden="true">＋</span> Add a book</button>
+      </header>
+
+      <section class="view active" id="library-view" aria-labelledby="page-title">
+        <div class="hero">
+          <div>
+            <p class="eyebrow" id="greeting">A SPACE FOR YOUR NEXT CHAPTER</p>
+            <h1 id="page-title">Make room for<br><em>good stories.</em></h1>
+            <p class="hero-copy">Keep track of what you're reading, what stays with you, and where to begin again.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="sun"></div><div class="book-stack stack-back"></div><div class="book-stack stack-mid"></div><div class="book-stack stack-front"></div>
+            <span class="art-spark spark-one">✳</span><span class="art-spark spark-two">✦</span>
+          </div>
+        </div>
+
+        <div class="stats-grid" aria-label="Library statistics">
+          <article class="stat-card"><span class="stat-label">IN YOUR LIBRARY</span><strong id="stat-total">0</strong><span class="stat-foot">books collected</span></article>
+          <article class="stat-card"><span class="stat-label">TO READ</span><strong id="stat-toread">0</strong><span class="stat-foot">waiting for you</span></article>
+          <article class="stat-card"><span class="stat-label">IN PROGRESS</span><strong id="stat-reading">0</strong><span class="stat-foot">stories unfolding</span></article>
+          <article class="stat-card"><span class="stat-label">FINISHED</span><strong id="stat-finished">0</strong><span class="stat-foot">worlds explored</span></article>
+        </div>
+
+        <section class="resume-section" id="resume-section" hidden>
+          <div class="section-heading"><div><p class="eyebrow">PICK UP WHERE YOU LEFT OFF</p><h2>Back to your book</h2></div></div>
+          <article class="resume-card" id="resume-card"></article>
+        </section>
+
+        <section class="library-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">THE COLLECTION</p><h2>Your library</h2></div>
+            <span class="result-count" id="result-count">0 books</span>
+          </div>
+          <div class="toolbar">
+            <label class="search-box"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search title or author…" autocomplete="off" aria-label="Search books"></label>
+            <label class="filter-label"><span class="sr-only">Filter by status</span><select id="status-filter"><option value="all">All books</option><option value="to-read">To read</option><option value="reading">Reading</option><option value="finished">Finished</option></select></label>
+          </div>
+          <div id="book-list" class="book-grid"></div>
+          <div id="empty-state" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">⌁</div><h3>Your next favorite is waiting.</h3>
+            <p>Add a book to start building your personal reading space.</p>
+            <button class="button button-primary" id="empty-add-button">＋ Add your first book</button>
+          </div>
+          <div id="no-results" class="empty-state compact" hidden><h3>No books found</h3><p>Try another title, author, or status.</p></div>
+        </section>
+      </section>
+
+      <section class="view" id="detail-view" aria-labelledby="detail-title">
+        <button class="back-link" id="back-to-library">← Back to library</button>
+        <div id="book-detail"></div>
+      </section>
+
+      <section class="view" id="journal-view" aria-labelledby="journal-title">
+        <div class="page-intro"><p class="eyebrow">YOUR READING LIFE</p><h1 id="journal-title">Reading <em>journal.</em></h1><p class="hero-copy">A small record of the ideas and pages you want to keep.</p></div>
+        <div id="journal-list" class="journal-list"></div>
+        <div id="journal-empty" class="empty-state"><div class="empty-icon">✎</div><h3>Your story starts with a note.</h3><p>Reading commits you save will appear here.</p><button class="button button-primary" id="journal-add-button">Explore your library</button></div>
+      </section>
+      <footer class="app-footer"><span>FOLIO · A PERSONAL READING SPACE</span><span>Your data stays in this browser.</span></footer>
+    </main>
+  </div>
+
+  <dialog id="book-dialog" class="dialog">
+    <form id="book-form" class="dialog-card">
+      <div class="dialog-header"><div><p class="eyebrow">ADD TO YOUR COLLECTION</p><h2 id="book-dialog-title">A new chapter.</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">×</button></div>
+      <input type="hidden" id="book-id">
+      <div class="form-grid">
+        <label class="field full">Book title <span>*</span><input id="book-title" name="title" required maxlength="200" placeholder="e.g. Norwegian Wood"></label>
+        <label class="field full">Author <span>*</span><input id="book-author" name="author" required maxlength="150" placeholder="e.g. Haruki Murakami"></label>
+        <label class="field">Reading status<select id="book-status"><option value="to-read">To read</option><option value="reading">Reading</option><option value="finished">Finished</option></select></label>
+        <label class="field">Format<select id="book-format"><option value="">Not specified</option><option>Paperback</option><option>Hardcover</option><option>Ebook</option><option>Audiobook</option><option>Other</option></select></label>
+        <label class="field">Access<select id="book-access"><option value="">Not specified</option><option value="owned">Owned</option><option value="borrowed">Borrowed</option><option value="library">Library</option><option value="digital">Digital access</option></select></label>
+        <label class="field">Recommended by<input id="book-recommender" maxlength="100" placeholder="A friend, creator…"></label>
+        <label class="field full">Where did you find it?<input id="book-source" maxlength="100" placeholder="Bookshop, library, online…"></label>
+      </div>
+      <p class="form-error" id="book-form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="button button-quiet" data-close-dialog>Cancel</button><button type="submit" class="button button-primary">Save book</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="commit-dialog" class="dialog">
+    <form id="commit-form" class="dialog-card">
+      <div class="dialog-header"><div><p class="eyebrow">SAVE YOUR PLACE</p><h2>Reading commit.</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">×</button></div>
+      <input type="hidden" id="commit-book-id">
+      <label class="field">Pages read / ending page<input id="commit-end-page" type="number" min="0" step="1" placeholder="e.g. 42"></label>
+      <label class="field">A quick summary<textarea id="commit-summary" rows="3" maxlength="1000" placeholder="What happened or what did you learn?"></textarea></label>
+      <label class="field">Key insight<textarea id="commit-insights" rows="2" maxlength="2000" placeholder="What idea stayed with you?"></textarea></label>
+      <label class="field">Questions to revisit<textarea id="commit-questions" rows="2" maxlength="2000" placeholder="Anything you want to think about later?"></textarea></label>
+      <label class="field">Next time, continue with…<input id="commit-next" maxlength="200" placeholder="Page 43, chapter 4…"></label>
+      <p class="form-error" id="commit-form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="button button-quiet" data-close-dialog>Cancel</button><button type="submit" class="button button-primary">Save checkpoint</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="review-dialog" class="dialog">
+    <form id="review-form" class="dialog-card">
+      <div class="dialog-header"><div><p class="eyebrow">AFTER THE LAST PAGE</p><h2>Your review.</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="Close dialog">×</button></div>
+      <input type="hidden" id="review-book-id">
+      <label class="field">Your rating<select id="review-rating"><option value="">No rating</option><option value="1">1 — Not for me</option><option value="2">2 — It was okay</option><option value="3">3 — Good</option><option value="4">4 — Really good</option><option value="5">5 — Loved it</option></select></label>
+      <label class="field">A few words about the book<textarea id="review-text" rows="5" maxlength="5000" placeholder="What will you remember about this book?"></textarea></label>
+      <p class="form-error" id="review-form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="button button-quiet" data-close-dialog>Cancel</button><button type="submit" class="button button-primary">Save review</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
